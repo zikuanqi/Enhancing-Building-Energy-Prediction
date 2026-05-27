@@ -1,18 +1,18 @@
-from .dyt import DyTLayer
-from .matmul_free import MatMulFreeDense
-from .kan import KANLayer, HierarchicalKAN
-from .kan_transformer import KANTransformer
 from .baselines import (
-    PlainTransformer,
-    TransformerKAN,
-    TransformerDyT,
-    TransformerMatMulFree,
-    TransformerKANMatMulFree,
-    TransformerKANDyT,
-    TransformerDyTMatMulFree,
     CNNLSTM,
     LSTMAttention,
+    PlainTransformer,
+    TransformerDyT,
+    TransformerDyTMatMulFree,
+    TransformerKAN,
+    TransformerKANDyT,
+    TransformerKANMatMulFree,
+    TransformerMatMulFree,
 )
+from .dyt import DyTLayer
+from .kan import HierarchicalKAN, KANLayer
+from .kan_transformer import KANTransformer
+from .matmul_free import MatMulFreeDense
 
 __all__ = [
     "DyTLayer",

@@ -5,6 +5,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from utils.data import synthetic_energy_dataframe
 from utils.preprocessing import (
     detect_and_clean_anomalies,
     linear_interpolate_missing,
@@ -12,7 +13,6 @@ from utils.preprocessing import (
     preprocess_energy_dataframe,
     temporal_encoding,
 )
-from utils.data import synthetic_energy_dataframe
 
 
 def test_linear_interpolate_fills_nan():

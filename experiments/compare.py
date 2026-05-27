@@ -20,10 +20,9 @@ from tqdm import tqdm
 # Allow running from repo root: ``python experiments/compare.py``
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from train import MODEL_REGISTRY, build_model, epoch_pass  # noqa: E402
+from train import build_model, epoch_pass  # noqa: E402
 from utils.data import prepare  # noqa: E402
 from utils.metrics import all_metrics  # noqa: E402
-
 
 METHODS = [
     "transformer",
@@ -108,7 +107,7 @@ def main() -> None:
     with open(args.output, "w") as f:
         json.dump(results, f, indent=2)
 
-    print(f"\n=== Table 1 ===")
+    print("\n=== Table 1 ===")
     print(f"{'Method':36s}  {'MAPE':>8s} {'RMSE':>8s} {'MAE':>8s} {'R^2':>8s}")
     for name, m in results.items():
         if "error" in m:

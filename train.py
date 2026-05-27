@@ -45,7 +45,6 @@ from utils.config import load_config
 from utils.data import prepare
 from utils.metrics import all_metrics
 
-
 MODEL_REGISTRY = {
     "proposed": KANTransformer,
     "transformer": PlainTransformer,
@@ -216,15 +215,21 @@ def parse_args() -> argparse.Namespace:
     args = p.parse_args()
 
     cfg = load_config(args.config)
-    if args.model is None: args.model = cfg["model"]["name"]
-    if args.data is None: args.data = cfg["data"].get("csv_path", "data/energy.csv")
-    if args.window is None: args.window = cfg["data"]["window"]
-    if args.horizon is None: args.horizon = cfg["data"]["horizon"]
-    if args.batch_size is None: args.batch_size = cfg["data"]["batch_size"]
-    if args.epochs is None: args.epochs = cfg["training"]["epochs"]
-    if args.lr is None: args.lr = cfg["training"]["lr"]
-    if args.weight_decay is None: args.weight_decay = cfg["training"]["weight_decay"]
-    if args.output_dir is None: args.output_dir = cfg["experiment"].get("output_dir", "checkpoints")
+    # CLI overrides take priority; otherwise fall back to YAML.
+    defaults = {
+        "model": cfg["model"]["name"],
+        "data": cfg["data"].get("csv_path", "data/energy.csv"),
+        "window": cfg["data"]["window"],
+        "horizon": cfg["data"]["horizon"],
+        "batch_size": cfg["data"]["batch_size"],
+        "epochs": cfg["training"]["epochs"],
+        "lr": cfg["training"]["lr"],
+        "weight_decay": cfg["training"]["weight_decay"],
+        "output_dir": cfg["experiment"].get("output_dir", "checkpoints"),
+    }
+    for k, v in defaults.items():
+        if getattr(args, k) is None:
+            setattr(args, k, v)
     args.cfg = cfg
     return args
 

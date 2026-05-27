@@ -37,7 +37,6 @@ from utils.data import build_dataloaders, synthetic_energy_dataframe  # noqa: E4
 from utils.metrics import all_metrics  # noqa: E402
 from utils.preprocessing import preprocess_energy_dataframe  # noqa: E402
 
-
 B, T, F_IN = 4, 64, 9  # batch, window, features (4 loads + 5 exog)
 HORIZON, N_TARGETS = 12, 4
 
@@ -86,7 +85,9 @@ def test_pipeline_synthetic():
     optim = torch.optim.AdamW(model.parameters(), lr=1e-3)
     y_hat = model(x)
     loss = nn.MSELoss()(y_hat, y)
-    optim.zero_grad(); loss.backward(); optim.step()
+    optim.zero_grad()
+    loss.backward()
+    optim.step()
     print(f"  ok  one training step on proposed model, loss {loss.item():.4f}")
 
 

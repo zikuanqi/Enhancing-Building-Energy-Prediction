@@ -27,7 +27,6 @@ from .dyt import DyTLayer
 from .kan import HierarchicalKAN
 from .matmul_free import MatMulFreeDense
 
-
 # -------- shared utilities --------------------------------------------------
 
 
