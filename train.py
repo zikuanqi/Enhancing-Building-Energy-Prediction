@@ -137,16 +137,32 @@ def train(args: argparse.Namespace) -> dict:
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser()
-    p.add_argument("--model", default="proposed", choices=list(MODEL_REGISTRY))
-    p.add_argument("--data", default="data/energy.csv", help="CSV path; falls back to synthetic if missing")
-    p.add_argument("--window", type=int, default=168)
-    p.add_argument("--horizon", type=int, default=24)
-    p.add_argument("--batch_size", type=int, default=64)
-    p.add_argument("--epochs", type=int, default=30)
-    p.add_argument("--lr", type=float, default=1e-3)
-    p.add_argument("--weight_decay", type=float, default=1e-4, help="λ in Eq. (1)")
-    p.add_argument("--output_dir", default="checkpoints")
-    return p.parse_args()
+    p.add_argument("--config", default=None, help="YAML config; merged onto configs/default.yaml")
+    p.add_argument("--model", default=None, choices=list(MODEL_REGISTRY))
+    p.add_argument("--data", default=None, help="CSV path; falls back to synthetic if missing")
+    p.add_argument("--window", type=int, default=None)
+    p.add_argument("--horizon", type=int, default=None)
+    p.add_argument("--batch_size", type=int, default=None)
+    p.add_argument("--epochs", type=int, default=None)
+    p.add_argument("--lr", type=float, default=None)
+    p.add_argument("--weight_decay", type=float, default=None, help="λ in Eq. (1)")
+    p.add_argument("--output_dir", default=None)
+    args = p.parse_args()
+
+    from utils.config import load_config
+    cfg = load_config(args.config)
+    # CLI overrides take priority over YAML
+    if args.model is None: args.model = cfg["model"]["name"]
+    if args.data is None: args.data = cfg["data"].get("csv_path", "data/energy.csv")
+    if args.window is None: args.window = cfg["data"]["window"]
+    if args.horizon is None: args.horizon = cfg["data"]["horizon"]
+    if args.batch_size is None: args.batch_size = cfg["data"]["batch_size"]
+    if args.epochs is None: args.epochs = cfg["training"]["epochs"]
+    if args.lr is None: args.lr = cfg["training"]["lr"]
+    if args.weight_decay is None: args.weight_decay = cfg["training"]["weight_decay"]
+    if args.output_dir is None: args.output_dir = cfg["experiment"].get("output_dir", "checkpoints")
+    args.cfg = cfg
+    return args
 
 
 def main() -> None:

@@ -1,0 +1,24 @@
+# Small / fast configuration for smoke runs on a CPU laptop.
+experiment:
+  name: quick_smoke
+  seed: 0
+
+data:
+  window: 48
+  horizon: 12
+  batch_size: 16
+
+model:
+  name: proposed
+  d_model: 64
+  n_heads: 4
+  num_layers: 2
+  dropout: 0.1
+  kan_hidden: [64, 128, 64]
+  num_splines: 4
+  num_basis: 8
+
+training:
+  epochs: 3
+  lr: 0.001
+  weight_decay: 0.0001

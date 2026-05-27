@@ -1,0 +1,42 @@
+# Default configuration for the proposed KAN-Transformer.
+# Override per experiment by passing --config <path> to train.py.
+
+experiment:
+  name: kan_transformer_default
+  seed: 42
+  output_dir: checkpoints
+  log_level: INFO
+
+data:
+  csv_path: data/energy.csv         # falls back to synthetic if missing
+  window: 168                       # 1 week of hourly history
+  horizon: 24                       # next 24 hours
+  batch_size: 64
+  num_workers: 0
+  rolling_windows: [24, 168]
+  train_frac: 0.7
+  val_frac: 0.1
+
+model:
+  name: proposed
+  d_model: 128
+  n_heads: 8
+  num_layers: 3
+  dropout: 0.1
+  kan_hidden: [128, 256, 128]
+  num_splines: 8
+  num_basis: 16
+  num_buildings: 1
+
+training:
+  epochs: 30
+  lr: 0.001
+  weight_decay: 0.0001              # λ in Eq. (1)
+  grad_clip: 5.0
+  early_stopping:
+    enabled: true
+    patience: 8
+    min_delta: 0.0001
+  scheduler:
+    name: cosine
+    warmup_epochs: 2
