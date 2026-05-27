@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - LICENSE (MIT), CHANGELOG, CONTRIBUTING.
+- 29 additional unit tests bringing the suite to **59 passing**:
+  `test_visualize.py` (6), `test_config.py` (10), `test_data.py` (9),
+  4 new `test_callbacks.py` cases.
+- Codecov coverage reporting + README badge.
+- Cross-OS CI matrix (Linux / Windows / macOS × Python 3.10 / 3.11 / 3.12
+  = 9 parallel jobs).
+- Weekly cron workflow (`weekly.yml`) running pip-audit + tests against
+  latest dependency versions; auto-opens an issue on regression.
+
+### Changed
+- `pyproject.toml`: configure coverage to omit CLI scripts
+  (`experiments/compare.py`, `experiments/plot_figures.py`) and tests.
+  Library coverage now **96 %** (branch coverage on), up from 72 %.
 - `pyproject.toml` with packaging metadata, optional `dev` / `notebook`
   extras, and console-script entry points (`becp-train`, `becp-evaluate`,
   `becp-compare`).

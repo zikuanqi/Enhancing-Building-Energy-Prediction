@@ -74,3 +74,23 @@ ignore = ["E501"]  # line length handled by formatter
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra --strict-markers"
+
+[tool.coverage.run]
+branch = true
+# CLI entry-point scripts in experiments/ are exercised via end-to-end runs
+# (`python experiments/compare.py`), not unit tests. Exclude them from
+# coverage so the library number reflects the testable surface.
+omit = [
+    "experiments/compare.py",
+    "experiments/plot_figures.py",
+    "tests/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+]
+show_missing = true
+skip_covered = false
