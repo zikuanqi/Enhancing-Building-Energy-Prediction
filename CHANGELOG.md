@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - LICENSE (MIT), CHANGELOG, CONTRIBUTING.
+- `pyproject.toml` with packaging metadata, optional `dev` / `notebook`
+  extras, and console-script entry points (`becp-train`, `becp-evaluate`,
+  `becp-compare`).
+- YAML configuration system (`configs/`, `utils/config.py`) with deep-merge
+  over a default config and CLI override.
+- Visualization module (`utils/visualize.py`) and
+  `experiments/plot_figures.py` reproducing Figure 2 (proposed vs. true)
+  and Figure 3 (all methods comparison) plus per-metric bar charts.
+- Early stopping, structured file + console logger, deterministic seeding
+  helper, and checkpoint resume in `train.py` (`utils/callbacks.py`).
+- GitHub Actions CI (`.github/workflows/ci.yml`) — ruff lint + pytest on
+  Python 3.10/3.11/3.12.
+- 28 per-module unit tests in `tests/` covering DyT gates, MatMul-free
+  Eq. (10) equivalence, KAN B-spline partition-of-unity, decomposition
+  reconstruction, preprocessing math, early-stopping logic, and metrics.
+- Quickstart Jupyter notebook (`notebooks/quickstart.ipynb`).
 
 ## [0.1.0] — 2025-05-27
 
