@@ -1,0 +1,66 @@
+name: Weekly dependency check
+
+on:
+  schedule:
+    # 06:00 UTC every Monday — picks up new PyTorch / pandas / etc. releases.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write   # so the job can open an issue if something regresses
+
+jobs:
+  audit:
+    name: pip-audit + tests on latest deps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install latest PyTorch (CPU)
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install project with dev extras
+        run: pip install --upgrade -e ".[dev]"
+
+      - name: List outdated packages
+        run: pip list --outdated || true
+
+      - name: Security audit (pip-audit)
+        run: |
+          pip install pip-audit
+          # Don't fail the job on advisories; just record them.
+          pip-audit --strict || true
+
+      - name: Run tests against latest dependencies
+        id: run_tests
+        run: pytest tests/ -v --tb=short
+
+      - name: Open an issue if tests regressed
+        if: failure() && steps.run_tests.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = `Weekly dependency check failed (${new Date().toISOString().slice(0, 10)})`;
+            const body = [
+              `The weekly run of the test suite against the latest dependency versions failed.`,
+              ``,
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              ``,
+              `This usually means a transitive dependency released a breaking change.`,
+              `Check the run log, pin the offending package in pyproject.toml, then close this issue.`,
+            ].join('\n');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['dependencies', 'automated'],
+            });
