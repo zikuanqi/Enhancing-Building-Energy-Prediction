@@ -12,6 +12,7 @@ import json
 import sys
 from pathlib import Path
 
+import numpy as np
 import torch
 import torch.nn as nn
 from tqdm import tqdm
@@ -58,7 +59,7 @@ def run_one(name, splits, train_loader, val_loader, test_loader, device, epochs,
         model.load_state_dict(best_state)
 
     _, pred, true = epoch_pass(model, test_loader, None, device, criterion)
-    return all_metrics(true, pred)
+    return all_metrics(true, pred), pred, true
 
 
 def main() -> None:
@@ -71,6 +72,8 @@ def main() -> None:
     p.add_argument("--lr", type=float, default=1e-3)
     p.add_argument("--weight_decay", type=float, default=1e-4)
     p.add_argument("--output", default="experiments/results.json")
+    p.add_argument("--save_predictions", default="experiments/predictions.npz",
+                   help="npz with y_true + each method's preds (set to '' to skip)")
     p.add_argument("--methods", nargs="*", default=METHODS)
     args = p.parse_args()
 
@@ -80,16 +83,26 @@ def main() -> None:
     )
 
     results = {}
+    saved_preds: dict[str, np.ndarray] = {}
+    saved_true: np.ndarray | None = None
     for name in tqdm(args.methods, desc="Methods"):
         try:
-            metrics = run_one(
+            metrics, pred, true = run_one(
                 name, splits, train_loader, val_loader, test_loader,
                 device, args.epochs, args.lr, args.weight_decay,
             )
+            saved_preds[name] = pred
+            saved_true = true
         except Exception as e:  # noqa: BLE001
             metrics = {"error": str(e)}
         results[name] = metrics
         print(f"{name:36s} → {metrics}")
+
+    if args.save_predictions and saved_true is not None:
+        out = Path(args.save_predictions)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(out, y_true=saved_true, **saved_preds)
+        print(f"\nSaved predictions → {out}")
 
     Path(args.output).parent.mkdir(parents=True, exist_ok=True)
     with open(args.output, "w") as f:
