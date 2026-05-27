@@ -149,5 +149,9 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-if __name__ == "__main__":
+def main() -> None:
     train(parse_args())
+
+
+if __name__ == "__main__":
+    main()
