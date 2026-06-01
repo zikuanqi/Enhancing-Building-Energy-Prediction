@@ -53,11 +53,11 @@ This repository provides a complete, reproducible PyTorch implementation of the 
 ## Architecture Overview
 
 ```
-                        Input: (B, T, features)
+                    Input: (B, T, features)
                               │
                     ┌─────────▼──────────┐
                     │  Multi-Scale       │
-                    │  Temporal           │
+                    │  Temporal          │
                     │  Decomposition     │
                     └─────────┬──────────┘
                               │
@@ -77,7 +77,7 @@ This repository provides a complete, reproducible PyTorch implementation of the 
                │   KAN-Transformer Block ×N  │
                │  ┌────────────────────────┐ │
                │  │ DyT( Multi-Head        │ │
-               │  │      Self-Attention )   │ │
+               │  │      Self-Attention )  │ │
                │  └───────────┬────────────┘ │
                │  ┌───────────▼────────────┐ │
                │  │ DyT( Hierarchical      │ │
@@ -86,15 +86,15 @@ This repository provides a complete, reproducible PyTorch implementation of the 
                └──────────────┬──────────────┘
                               │
                     ┌─────────▼──────────┐
-                    │  Mean Pooling       │
+                    │  Mean Pooling      │
                     └─────────┬──────────┘
                               │
                     ┌─────────▼──────────┐
-                    │  MatMul-Free Dense  │
-                    │  Projection Head    │
+                    │  MatMul-Free Dense │
+                    │  Projection Head   │
                     └─────────┬──────────┘
                               │
-                    Output: (B, horizon, num_targets)
+              Output: (B, horizon, num_targets)
 ```
 
 **Data flow:**
